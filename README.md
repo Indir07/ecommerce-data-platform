@@ -191,13 +191,21 @@ If PostgreSQL is already using port 5432, set `POSTGRES_PORT` in `.env` to an av
 
 ## Screenshots
 
-Add portfolio screenshots here after running the project:
+### Airflow DAG
 
-- Architecture and data-flow diagram.
-- Airflow DAG graph showing the task dependencies.
-- A successful DAG run with all five stages green.
-- dbt test results and the `analytics` schema in a PostgreSQL client.
-- Example `quality_report.json` and rejected-record log.
+![Airflow DAG graph showing the e-commerce ELT task dependencies](./airflow_dags.png)
+
+### dbt tests
+
+![Successful dbt data quality tests](./dbt_tests.png)
+
+### Analytics tables
+
+![PostgreSQL analytics fact and dimension tables](./analytics_tables.png)
+
+### Data quality report
+
+![Batch data quality report with accepted and rejected record metrics](./data_quality_report.png)
 
 ## Future improvements
 
