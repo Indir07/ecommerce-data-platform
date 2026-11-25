@@ -54,7 +54,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: ["bash", "/opt/airflow/scripts/airflow-init.sh"]
+    command: ["python", "/opt/airflow/scripts/airflow_init.py"]
     restart: "no"
 
   airflow-webserver:
