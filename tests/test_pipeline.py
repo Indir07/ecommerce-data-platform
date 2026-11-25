@@ -13,6 +13,24 @@ def test_generation_is_deterministic_for_a_batch(tmp_path):
         assert (first / filename).read_bytes() == (second / filename).read_bytes()
 
 
+def test_generation_supports_calendar_shaped_batch_ids(tmp_path):
+    batch = generate_batch(
+        20261125,
+        tmp_path / "raw",
+        customer_count=4,
+        product_count=3,
+        order_count=3,
+    )
+
+    with (batch / "orders.csv").open(newline="", encoding="utf-8") as orders:
+        order_dates = [row["order_date"] for row in csv.DictReader(orders)]
+    assert order_dates[-1] == "not-a-date"
+    assert all(
+        value.startswith(("2025-", "2026-", "2027-"))
+        for value in order_dates[:-1]
+    )
+
+
 def test_validation_rejects_bad_rows_and_downstream_orphans(tmp_path):
     source = generate_batch(2, tmp_path / "raw", customer_count=6, product_count=4, order_count=8)
     output = tmp_path / "validated" / "batch_00000002"

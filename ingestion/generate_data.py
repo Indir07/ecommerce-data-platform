@@ -130,7 +130,7 @@ def generate_batch(
         order_id = first_order_id + order_number
         customer_id = rng.randint(1, customer_count - 1)
         order_timestamp = datetime.combine(
-            BASE_DATE + timedelta(days=batch_id * 3 + rng.randrange(365)),
+            BASE_DATE + timedelta(days=1_000 + batch_id % 365 + rng.randrange(365)),
             time(hour=rng.randrange(24), minute=rng.randrange(60)),
         )
         item_count = rng.randint(1, min(4, product_count - 1))
