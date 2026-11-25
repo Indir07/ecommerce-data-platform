@@ -22,8 +22,7 @@ models:
       - name: category
         data_tests:
           - accepted_values:
-              arguments:
-                values: ["apparel", "beauty", "electronics", "home", "sports"]
+              values: ["apparel", "beauty", "electronics", "home", "sports"]
   - name: fact_orders
     description: One row per accepted order with source total and summed accepted line amounts.
     columns:
@@ -36,14 +35,12 @@ models:
         data_tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_customers')
-                field: customer_id
+              to: ref('dim_customers')
+              field: customer_id
       - name: total_amount
         data_tests:
           - not_null
       - name: status
         data_tests:
           - accepted_values:
-              arguments:
-                values: ["cancelled", "delivered", "pending", "processing", "shipped"]
+              values: ["cancelled", "delivered", "pending", "processing", "shipped"]

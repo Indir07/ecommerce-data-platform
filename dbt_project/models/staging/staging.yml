@@ -35,14 +35,12 @@ models:
       - name: customer_id
         data_tests:
           - relationships:
-              arguments:
-                to: ref('stg_customers')
-                field: customer_id
+              to: ref('stg_customers')
+              field: customer_id
       - name: status
         data_tests:
           - accepted_values:
-              arguments:
-                values: ["cancelled", "delivered", "pending", "processing", "shipped"]
+              values: ["cancelled", "delivered", "pending", "processing", "shipped"]
   - name: stg_order_items
     description: Typed order line records with positive quantities and prices.
     columns:
@@ -53,15 +51,13 @@ models:
       - name: order_id
         data_tests:
           - relationships:
-              arguments:
-                to: ref('stg_orders')
-                field: order_id
+              to: ref('stg_orders')
+              field: order_id
       - name: product_id
         data_tests:
           - relationships:
-              arguments:
-                to: ref('stg_products')
-                field: product_id
+              to: ref('stg_products')
+              field: product_id
       - name: quantity
         data_tests:
           - not_null
