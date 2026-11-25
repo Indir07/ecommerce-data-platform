@@ -60,6 +60,7 @@ PostgreSQL is the only database service. It holds both the `ecommerce` warehouse
 │   ├── tests/                # Singular dbt quality tests
 │   ├── dbt_project.yml
 │   └── profiles.yml
+├── .github/workflows/        # Automated tests and Compose validation
 ├── ingestion/                # Generator, validators, configuration, PostgreSQL loader
 ├── logs/                     # Airflow task and scheduler logs
 ├── scripts/                  # Airflow initialization helpers
@@ -138,7 +139,7 @@ python -m ingestion.validate_data --batch-id 1
 python -m ingestion.load_data --batch-id 1
 ```
 
-The dbt commands run in the Airflow image, which has the matching PostgreSQL hostname and credentials:
+The dbt commands run in the Airflow image's isolated dbt environment, which has the matching PostgreSQL hostname and credentials:
 
 ```powershell
 docker compose exec airflow-webserver /home/airflow/dbt-venv/bin/dbt run --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
@@ -190,8 +191,10 @@ python -m pytest -q
 Run dbt tests after at least one successful load:
 
 ```powershell
-docker compose exec airflow-webserver dbt test --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
+docker compose exec airflow-webserver /home/airflow/dbt-venv/bin/dbt test --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
 ```
+
+GitHub Actions runs the Python unit tests and validates the Compose configuration on pushes and pull requests to `main`.
 
 Useful diagnostics:
 
@@ -208,6 +211,7 @@ If PostgreSQL is already using port 5432, set `POSTGRES_PORT` in `.env` to an av
 
 Add portfolio screenshots here after running the project:
 
+- Architecture and data-flow diagram.
 - Airflow DAG graph showing the task dependencies.
 - A successful DAG run with all five stages green.
 - dbt test results and the `analytics` schema in a PostgreSQL client.
@@ -218,7 +222,7 @@ Add portfolio screenshots here after running the project:
 - Add snapshot-based slowly changing dimensions for customer and product history.
 - Add source freshness SLAs, late-arriving data handling, and backfill controls.
 - Add reconciliation tests for order totals and a documented refund/discount model.
-- Publish dbt docs artifacts and add CI for Python tests, dbt parsing, and Compose validation.
+- Publish dbt docs artifacts and add dbt parsing to CI when a lightweight runner image is available.
 - Add schema-versioned source contracts and configurable, measured quality thresholds.
 
 ## Security note
