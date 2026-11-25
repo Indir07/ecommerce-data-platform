@@ -1,0 +1,39 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Validated source records loaded by the Python ingestion package.
+    tables:
+      - name: customers
+        description: Current customer records, upserted by customer_id.
+        columns:
+          - name: customer_id
+            description: Stable source customer identifier.
+            data_tests:
+              - not_null
+              - unique
+      - name: products
+        description: Current product catalog, upserted by product_id.
+        columns:
+          - name: product_id
+            description: Stable source product identifier.
+            data_tests:
+              - not_null
+              - unique
+      - name: orders
+        description: Accepted order headers, upserted by order_id.
+        columns:
+          - name: order_id
+            description: Stable source order identifier.
+            data_tests:
+              - not_null
+              - unique
+      - name: order_items
+        description: Accepted order lines, upserted by order_item_id.
+        columns:
+          - name: order_item_id
+            description: Stable source order line identifier.
+            data_tests:
+              - not_null
+              - unique
