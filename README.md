@@ -8,29 +8,11 @@ An online retailer needs trustworthy customer, product, order, and order-line da
 
 ## Architecture and data flow
 
-```text
-Deterministic Python batch generator
-                 |
-                 v
-       data/raw/batch_<id>/*.csv
-                 |
-                 v
-Python validation --> accepted CSVs + rejected_records.jsonl + quality_report.json
-                 |
-                 v
-PostgreSQL raw schema (transactional primary-key upserts)
-                 |
-                 v
-dbt staging views --> intermediate order-line view
-                 |
-                 v
-analytics.dim_customers / analytics.dim_products / analytics.fact_orders
-                 ^
-                 |
-      Airflow LocalExecutor DAG
-```
+![Architecture and data flow for the e-commerce incremental ELT platform](./ecommerce_elt_architecture.svg)
 
-PostgreSQL is the only database service. It holds both the `ecommerce` warehouse database and the separate `airflow` metadata database. Airflow uses LocalExecutor rather than Redis/Celery, keeping the local stack small. No cloud account, paid API, or external data service is required.
+The diagram distinguishes data movement from Airflow orchestration. PostgreSQL hosts the `ecommerce` warehouse database and the separate `airflow` metadata database. Airflow uses LocalExecutor rather than Redis/Celery, keeping the local stack small. No cloud account, paid API, or external data service is required.
+
+PostgreSQL is the only database service in the local stack.
 
 ## Technology and learning map
 

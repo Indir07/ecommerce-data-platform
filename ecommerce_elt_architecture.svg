@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="title desc" xmlns:c2pa="http://c2pa.org/manifest">
+  <title id="title">E-commerce incremental ELT data platform: architecture and data flow</title>
+  <desc id="desc">Local Docker Compose runtime. Airflow orchestrates a Python generator, validation, and loader into PostgreSQL raw tables, then dbt builds staging views, an intermediate view, and incremental marts, followed by dbt tests.</desc>
+
+  <defs>
+    <marker id="arrData" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1E293B"/>
+    </marker>
+    <marker id="arrCtl" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4F46E5"/>
+    </marker>
+    <marker id="arrCtlLight" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#818CF8"/>
+    </marker>
+  </defs>
+
+  <style>
+    text { font-family: Inter, "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    .h1 { font-size: 30px; font-weight: 700; fill: #0F172A; }
+    .sub { font-size: 15px; fill: #475569; }
+    .cap { font-size: 13px; font-weight: 700; fill: #475569; letter-spacing: 1.2px; }
+    .ttl { font-size: 17px; font-weight: 700; fill: #0F172A; }
+    .ttlA { font-size: 19px; font-weight: 700; fill: #312E81; }
+    .d { font-size: 14.5px; fill: #475569; }
+    .m { font-family: "JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace; font-size: 13.5px; fill: #334155; }
+    .lbl { font-size: 13px; fill: #334155; }
+    .lblT { font-size: 13px; font-weight: 700; fill: #0F766E; }
+    .chip { font-size: 14.5px; fill: #3730A3; text-anchor: middle; }
+    .task { font-size: 16px; font-weight: 700; fill: #312E81; text-anchor: middle; }
+    .badge { font-size: 12px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+    .data { fill: none; stroke: #1E293B; stroke-width: 2.4; }
+    .ctl { fill: none; stroke: #4F46E5; stroke-width: 2; stroke-dasharray: 7 5; }
+    .ctl2 { fill: none; stroke: #818CF8; stroke-width: 1.6; stroke-dasharray: 5 4; }
+  </style>
+
+  <rect width="1600" height="900" fill="#FFFFFF"/>
+
+  <!-- Header -->
+  <text x="48" y="48" class="h1">E-commerce Incremental ELT Platform</text>
+  <text x="48" y="74" class="sub">Local architecture and data flow: Python, PostgreSQL 16, dbt Core, Apache Airflow 2.10</text>
+
+  <!-- Legend -->
+  <rect x="1196" y="20" width="356" height="60" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <line x1="1214" y1="40" x2="1264" y2="40" class="data" marker-end="url(#arrData)"/>
+  <text x="1278" y="45" class="d">Data flow</text>
+  <line x1="1214" y1="62" x2="1264" y2="62" class="ctl" marker-end="url(#arrCtl)"/>
+  <text x="1278" y="67" class="d">Orchestration (control flow)</text>
+
+  <!-- Docker Compose boundary -->
+  <rect x="24" y="88" width="1552" height="792" rx="20" fill="#FAFBFD" stroke="#64748B" stroke-width="1.6" stroke-dasharray="10 7"/>
+  <text x="44" y="110" class="cap">DOCKER COMPOSE: LOCAL RUNTIME BOUNDARY</text>
+
+  <!-- Airflow band -->
+  <rect x="48" y="122" width="1504" height="184" rx="14" fill="#EEF2FF" stroke="#818CF8" stroke-width="1.5"/>
+  <text x="68" y="153" class="ttlA">Apache Airflow 2.10 (LocalExecutor)</text>
+  <rect x="432" y="133" width="104" height="28" rx="8" fill="#FFFFFF" stroke="#A5B4FC"/>
+  <text x="484" y="152" class="chip">Webserver</text>
+  <rect x="546" y="133" width="104" height="28" rx="8" fill="#FFFFFF" stroke="#A5B4FC"/>
+  <text x="598" y="152" class="chip">Scheduler</text>
+  <text x="670" y="152" class="d">Environments:</text>
+  <rect x="808" y="133" width="232" height="28" rx="8" fill="#FFFFFF" stroke="#A5B4FC"/>
+  <text x="924" y="152" class="chip">Python ingestion package</text>
+  <rect x="1052" y="133" width="484" height="28" rx="8" fill="#FFFFFF" stroke="#A5B4FC"/>
+  <text x="1294" y="152" class="chip">dbt Core + PostgreSQL adapter (isolated environment)</text>
+
+  <!-- DAG -->
+  <rect x="58" y="172" width="1484" height="124" rx="10" fill="#FFFFFF" fill-opacity="0.7" stroke="#A5B4FC" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="78" y="197" class="ttl" style="font-size:16px;fill:#312E81">DAG: ecommerce_incremental_elt</text>
+  <text x="1526" y="197" class="d" text-anchor="end" font-style="italic">Retries and reruns are orchestration behavior (Airflow)</text>
+
+  <rect x="73" y="214" width="140" height="44" rx="10" fill="#E0E7FF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="143" y="242" class="task">Generate</text>
+  <rect x="593" y="214" width="140" height="44" rx="10" fill="#E0E7FF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="663" y="242" class="task">Validate</text>
+  <rect x="1163" y="214" width="140" height="44" rx="10" fill="#E0E7FF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="1233" y="242" class="task">Ingest</text>
+  <rect x="1330" y="214" width="96" height="44" rx="10" fill="#E0E7FF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="1378" y="242" class="task">dbt run</text>
+  <rect x="1446" y="214" width="92" height="44" rx="10" fill="#E0E7FF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="1492" y="242" class="task">dbt test</text>
+
+  <!-- Task order (control) -->
+  <line x1="215" y1="236" x2="590" y2="236" class="ctl2" marker-end="url(#arrCtlLight)"/>
+  <line x1="735" y1="236" x2="1160" y2="236" class="ctl2" marker-end="url(#arrCtlLight)"/>
+  <line x1="1305" y1="236" x2="1327" y2="236" class="ctl2" marker-end="url(#arrCtlLight)"/>
+  <line x1="1428" y1="236" x2="1443" y2="236" class="ctl2" marker-end="url(#arrCtlLight)"/>
+
+  <!-- Control arrows to stages -->
+  <line x1="143" y1="258" x2="143" y2="333" class="ctl" marker-end="url(#arrCtl)"/>
+  <line x1="663" y1="258" x2="663" y2="333" class="ctl" marker-end="url(#arrCtl)"/>
+  <line x1="1233" y1="258" x2="1233" y2="333" class="ctl" marker-end="url(#arrCtl)"/>
+  <path d="M1378 258 V634 Q1378 650 1362 650 H1034" class="ctl" marker-end="url(#arrCtl)"/>
+  <line x1="1492" y1="258" x2="1492" y2="688" class="ctl" marker-end="url(#arrCtl)"/>
+
+  <!-- Row 1: Python stages and local files -->
+  <!-- 1 Generator -->
+  <rect x="48" y="336" width="190" height="160" rx="12" fill="#EFF6FF" stroke="#60A5FA" stroke-width="1.5"/>
+  <circle cx="68" cy="358" r="10" fill="#2563EB"/><text x="68" y="362.5" class="badge">1</text>
+  <text x="86" y="363" class="ttl">Synthetic data</text>
+  <text x="86" y="383" class="ttl">generator</text>
+  <text x="64" y="414" class="d">Reproducible,</text>
+  <text x="64" y="433" class="d">deterministic batches:</text>
+  <text x="64" y="452" class="d">customers, products,</text>
+  <text x="64" y="471" class="d">orders, order_items</text>
+
+  <!-- 2 Local CSV batches -->
+  <rect x="298" y="336" width="190" height="160" rx="12" fill="#FAFAF9" stroke="#A8A29E" stroke-width="1.5"/>
+  <circle cx="318" cy="358" r="10" fill="#78716C"/><text x="318" y="362.5" class="badge">2</text>
+  <text x="336" y="363" class="ttl">Local CSV</text>
+  <text x="336" y="383" class="ttl">batches</text>
+  <text x="314" y="414" class="m">data/raw/batch_&lt;id&gt;/</text>
+  <text x="314" y="436" class="d">One folder per batch:</text>
+  <text x="314" y="455" class="d">customers, products,</text>
+  <text x="314" y="474" class="d">orders, order_items</text>
+
+  <!-- 3 Validation -->
+  <rect x="548" y="336" width="230" height="160" rx="12" fill="#EFF6FF" stroke="#60A5FA" stroke-width="1.5"/>
+  <circle cx="568" cy="358" r="10" fill="#2563EB"/><text x="568" y="362.5" class="badge">3</text>
+  <text x="586" y="363" class="ttl">Python data-quality</text>
+  <text x="586" y="383" class="ttl">validation</text>
+  <text x="564" y="410" class="d">Required fields,</text>
+  <text x="564" y="428" class="d">duplicate IDs, dates,</text>
+  <text x="564" y="446" class="d">prices, quantities,</text>
+  <text x="564" y="464" class="d">accepted values,</text>
+  <text x="564" y="482" class="d">referential integrity</text>
+
+  <!-- 4a Accepted -->
+  <rect x="838" y="336" width="230" height="70" rx="12" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5"/>
+  <circle cx="858" cy="358" r="10" fill="#16A34A"/><text x="858" y="362.5" class="badge">4</text>
+  <text x="876" y="363" class="ttl">Accepted CSV records</text>
+  <text x="854" y="390" class="d">+ batch quality report</text>
+
+  <!-- 4b Rejected -->
+  <rect x="838" y="414" width="230" height="82" rx="12" fill="#FFF1F2" stroke="#FB7185" stroke-width="1.5"/>
+  <circle cx="858" cy="436" r="10" fill="#E11D48"/><text x="858" y="440.5" class="badge">4</text>
+  <text x="876" y="441" class="ttl">Rejected records</text>
+  <text x="854" y="463" class="d">Row-level reasons</text>
+  <text x="854" y="483" class="d" style="fill:#BE123C;font-weight:700;font-size:13.5px">Not loaded to PostgreSQL</text>
+
+  <!-- 5 Loader -->
+  <rect x="1128" y="336" width="210" height="160" rx="12" fill="#EFF6FF" stroke="#60A5FA" stroke-width="1.5"/>
+  <circle cx="1148" cy="358" r="10" fill="#2563EB"/><text x="1148" y="362.5" class="badge">5</text>
+  <text x="1166" y="363" class="ttl">Python PostgreSQL</text>
+  <text x="1166" y="383" class="ttl">loader</text>
+  <text x="1144" y="414" class="d">Transactional upsert</text>
+  <text x="1144" y="433" class="d">of accepted records;</text>
+  <text x="1144" y="452" class="d">idempotent via</text>
+  <text x="1144" y="471" class="d">primary keys</text>
+
+  <!-- Row 1 data arrows -->
+  <line x1="240" y1="416" x2="295" y2="416" class="data" marker-end="url(#arrData)"/>
+  <text x="267" y="408" class="lbl" text-anchor="middle">writes</text>
+  <line x1="490" y1="416" x2="545" y2="416" class="data" marker-end="url(#arrData)"/>
+  <text x="517" y="408" class="lbl" text-anchor="middle">reads</text>
+  <line x1="780" y1="371" x2="835" y2="371" class="data" marker-end="url(#arrData)"/>
+  <text x="807" y="363" class="lbl" text-anchor="middle">accepted</text>
+  <line x1="780" y1="455" x2="835" y2="455" class="data" marker-end="url(#arrData)"/>
+  <text x="807" y="447" class="lbl" text-anchor="middle">rejected</text>
+  <line x1="1070" y1="371" x2="1125" y2="371" class="data" marker-end="url(#arrData)"/>
+  <text x="1097" y="363" class="lbl" text-anchor="middle">CSV</text>
+
+  <!-- Loader to raw -->
+  <path d="M1233 496 V510 Q1233 526 1217 526 H278 Q262 526 262 542 V628" class="data" marker-end="url(#arrData)"/>
+  <text x="740" y="518" class="lbl" text-anchor="middle">Transactional upsert into ecommerce.raw (primary-key idempotent)</text>
+
+  <!-- PostgreSQL container -->
+  <rect x="48" y="548" width="1002" height="304" rx="14" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/>
+  <text x="68" y="575" class="ttl" style="font-size:18px">PostgreSQL 16</text>
+  <text x="1032" y="575" class="d" text-anchor="end">One instance, two databases</text>
+
+  <!-- ecommerce database -->
+  <rect x="68" y="590" width="962" height="180" rx="12" fill="#FFFFFF" stroke="#64748B" stroke-width="1.5"/>
+  <text x="88" y="614" class="ttl" style="font-size:16px">ecommerce database</text>
+  <text x="327" y="614" class="ttl" style="font-size:15px;fill:#0F766E">6  dbt Core transformations</text>
+
+  <rect x="88" y="630" width="190" height="120" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="104" y="656" class="ttl">raw schema</text>
+  <text x="104" y="682" class="d">Constrained tables</text>
+  <text x="104" y="702" class="d">Primary keys</text>
+  <text x="104" y="722" class="d">Accepted records only</text>
+
+  <rect x="327" y="630" width="190" height="120" rx="10" fill="#E0F2FE" stroke="#38BDF8" stroke-width="1.5"/>
+  <text x="343" y="656" class="ttl">Staging views</text>
+  <text x="343" y="682" class="m">stg_customers</text>
+  <text x="343" y="701" class="m">stg_products</text>
+  <text x="343" y="720" class="m">stg_orders</text>
+  <text x="343" y="739" class="m">stg_order_items</text>
+
+  <rect x="566" y="630" width="175" height="120" rx="10" fill="#CFFAFE" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="582" y="656" class="ttl">Intermediate view</text>
+  <text x="582" y="690" class="m">int_order_items</text>
+
+  <rect x="790" y="630" width="220" height="120" rx="10" fill="#CCFBF1" stroke="#14B8A6" stroke-width="1.5"/>
+  <text x="806" y="656" class="ttl">analytics schema</text>
+  <text x="806" y="677" class="d">Incremental marts</text>
+  <text x="806" y="702" class="m">dim_customers</text>
+  <text x="806" y="721" class="m">dim_products</text>
+  <text x="806" y="740" class="m">fact_orders</text>
+
+  <line x1="280" y1="690" x2="324" y2="690" class="data" marker-end="url(#arrData)"/>
+  <text x="302" y="682" class="lblT" text-anchor="middle">dbt</text>
+  <line x1="519" y1="690" x2="563" y2="690" class="data" marker-end="url(#arrData)"/>
+  <text x="541" y="682" class="lblT" text-anchor="middle">dbt</text>
+  <line x1="743" y1="690" x2="787" y2="690" class="data" marker-end="url(#arrData)"/>
+  <text x="765" y="682" class="lblT" text-anchor="middle">dbt</text>
+
+  <!-- airflow database -->
+  <rect x="68" y="788" width="352" height="48" rx="10" fill="#FFFFFF" stroke="#64748B" stroke-width="1.5"/>
+  <text x="88" y="809" class="ttl" style="font-size:16px">airflow database</text>
+  <text x="88" y="827" class="d">Airflow metadata</text>
+
+  <!-- dbt tests -->
+  <rect x="1110" y="690" width="430" height="92" rx="12" fill="#FFF7ED" stroke="#FB923C" stroke-width="1.5"/>
+  <circle cx="1132" cy="714" r="10" fill="#EA580C"/><text x="1132" y="718.5" class="badge">7</text>
+  <text x="1150" y="719" class="ttl">dbt tests</text>
+  <text x="1128" y="746" class="d">Uniqueness, not-null, accepted values,</text>
+  <text x="1128" y="766" class="d">relationships, non-negative fact measures</text>
+  <line x1="1108" y1="736" x2="1034" y2="736" class="data" marker-end="url(#arrData)"/>
+  <text x="1058" y="728" class="lbl">queries</text>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo1NDBiMzgzMy05YjM0LTQ5MjktYTliYy03MDlmYWFiOTU5ZjcAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaLuqhq4YcO8q50uL79dkkbMAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDoyNTFiNjBjMS0wZTZhLTQ5YmQtYjg0My01MjNkYWEyM2U2MzNscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNowQXHofHa4k2Mh8S6aDzNtAAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg3BY3sis+85ocT43IYUVBSiLCn9UMt01Rj0XmuTtjvtukZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaJQkZxlty/S3d94a9IUNLRUAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIMkGcSpetEghcDHWxgsnTMA/9zINiVunPW4MdZUFNRayZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GTaMZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjU0MGIzODMzLTliMzQtNDkyOS1hOWJjLTcwOWZhYWI5NTlmNy9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjZhZDU0OTkzLTI1ZTYtNDk4YS1iYWQ4LTUwNTNlMmYxY2ZmZXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDcFjeyKz7zmhxPjchhRUFKIsKf1Qy3TVGPRea5O2O+26JjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggGu8wAtE1pNosloewfSPeEmeodSnN0gAA8R6FSjsxDaiiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFgghDxMBXzT59sR1KhgXlp+ExkLT/z/8IOaFjG/WFrKUrt0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQO+BvI2yXoLKMXftwUDl5AIdU5eyu5Gxt+mWB3I44hj61QFd/P2RznjhaRi2oomMewU1N6TRUZj4GGG/sSVuDC8=</c2pa:manifest></metadata></svg>
