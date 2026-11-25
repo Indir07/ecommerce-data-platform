@@ -40,6 +40,7 @@ services:
       RANDOM_SEED: ${RANDOM_SEED:-2025}
       APP_DATA_DIR: /opt/airflow/data
       DBT_PROFILES_DIR: /opt/airflow/dbt_project
+      DBT_EXECUTABLE: /home/airflow/dbt-venv/bin/dbt
       PYTHONPATH: /opt/airflow
       AIRFLOW_UID: ${AIRFLOW_UID:-50000}
     volumes: &airflow-volumes

@@ -68,7 +68,8 @@ PostgreSQL is the only database service. It holds both the `ecommerce` warehouse
 ├── docker-compose.yml
 ├── Dockerfile
 ├── requirements.txt          # Local Python tooling
-└── requirements-airflow.txt  # Dependencies installed in the Airflow image
+├── requirements-airflow.txt  # Airflow-side ingestion dependencies
+└── requirements-dbt.txt      # Isolated dbt virtual environment dependencies
 ```
 
 ## Windows 11 setup
@@ -140,8 +141,8 @@ python -m ingestion.load_data --batch-id 1
 The dbt commands run in the Airflow image, which has the matching PostgreSQL hostname and credentials:
 
 ```powershell
-docker compose exec airflow-webserver dbt run --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
-docker compose exec airflow-webserver dbt test --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
+docker compose exec airflow-webserver /home/airflow/dbt-venv/bin/dbt run --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
+docker compose exec airflow-webserver /home/airflow/dbt-venv/bin/dbt test --project-dir /opt/airflow/dbt_project --profiles-dir /opt/airflow/dbt_project
 ```
 
 ## Incremental and rerun behavior

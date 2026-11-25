@@ -18,6 +18,7 @@ from ingestion.validation import validate_batch
 
 logger = logging.getLogger(__name__)
 DBT_PROJECT_DIR = PROJECT_ROOT / "dbt_project"
+DBT_EXECUTABLE = os.getenv("DBT_EXECUTABLE", "dbt")
 
 
 @dag(
@@ -57,7 +58,7 @@ def ecommerce_incremental_elt():
     @task
     def transform_warehouse() -> None:
         subprocess.run(
-            ["dbt", "run", "--project-dir", str(DBT_PROJECT_DIR), "--profiles-dir", str(DBT_PROJECT_DIR)],
+            [DBT_EXECUTABLE, "run", "--project-dir", str(DBT_PROJECT_DIR), "--profiles-dir", str(DBT_PROJECT_DIR)],
             cwd=DBT_PROJECT_DIR,
             env=os.environ.copy(),
             check=True,
@@ -66,7 +67,7 @@ def ecommerce_incremental_elt():
     @task
     def test_warehouse() -> None:
         subprocess.run(
-            ["dbt", "test", "--project-dir", str(DBT_PROJECT_DIR), "--profiles-dir", str(DBT_PROJECT_DIR)],
+            [DBT_EXECUTABLE, "test", "--project-dir", str(DBT_PROJECT_DIR), "--profiles-dir", str(DBT_PROJECT_DIR)],
             cwd=DBT_PROJECT_DIR,
             env=os.environ.copy(),
             check=True,
